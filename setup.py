@@ -10,7 +10,7 @@ setup(
     url='https://github.com/call/ultipro-soap-python',
     author='Brian Call',
     author_email='callbrian@gmail.com',
-    packages=['ultiprosoap', 'ultiprosoap.helper'],
+    packages=['ultiprosoap'],
     license='Apache License 2.0',
     install_requires=[
         'zeep>=1.4.1',

@@ -40,7 +40,17 @@ def compile_on_eid(responses):
                 if 'TerminationInfo' not in compiled[eid]:
                     compiled[eid]['TerminationInfo'] = item['TerminationInfo']
                 elif 'TerminationInfo' in compiled[eid]:
-                    logging.warning('ERROR: Multiple results for TerminationInfo for EID: %s' % compiled[eid]['EmployeeNumber'])
+                    logging.warning('Multiple results for TerminationInfo for EID: %s' % compiled[eid]['EmployeeNumber'])
+            if 'PhoneInformations' in item:
+                if 'PhoneInformations' not in compiled[eid]:
+                    compiled[eid]['PhoneInformations'] = item['PhoneInformations']
+                elif 'PhoneInformations' in compiled[eid]:
+                    logging.warning('Multiple results for PhoneInformations for EID: %s' % compiled[eid]['EmployeeNumber'])
+            if 'EmploymentInformations' in item:
+                if 'EmploymentInformations' not in compiled[eid]:
+                    compiled[eid]['EmploymentInformations'] = item['EmploymentInformations']
+                elif 'EmploymentInformations' in compiled[eid]:
+                    logging.warning('Multiple results for EmploymentInformations for EID: %s' % compiled[eid]['EmployeeNumber'])
 
     return compiled
 
