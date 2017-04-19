@@ -1,4 +1,5 @@
 import zeep
+import logging
 
 def serialize(response):
     return zeep.helpers.serialize_object(response)
