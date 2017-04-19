@@ -3,19 +3,6 @@
 from zeep import Client as Zeep
 from zeep import xsd
 
-from lxml import etree
-from zeep import Plugin
-
-class MyLoggingPlugin(Plugin):
-
-    def ingress(self, envelope, http_headers, operation):
-        print(etree.tostring(envelope, pretty_print=True))
-        return envelope, http_headers
-
-    def egress(self, envelope, http_headers, operation, binding_options):
-        print(etree.tostring(envelope, pretty_print=True))
-        return envelope, http_headers
-
 class Client:
 
     def __init__(self, username, password, client_access_key, user_access_key, base_url):
