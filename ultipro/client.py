@@ -44,7 +44,7 @@ class Client:
 
     def find_jobs(self, query):
         self.authenticate()
-        client = Zeep(self.base_url + '/EmployeeJob?wsdl', plugins=[MyLoggingPlugin()])
+        client = Zeep(self.base_url + '/EmployeeJob?wsdl')
         response = client.service.FindJobs(_soapheaders=[self.session_header], query=query)
         return response['Results']['EmployeeJob']
 
