@@ -5,9 +5,11 @@ endpoint = '/EmployeeJob?wsdl'
 
 def find_jobs(client, query):
     zeep_client = Zeep(client.base_url + endpoint)
-    return zeep_client.service.FindJobs(
+    response = zeep_client.service.FindJobs(
         _soapheaders=[client.session_header],
         query=query)
+
+    return response['Results']['EmployeeJob']
 
 def get_job_by_employee_identifier(client, employee_identifier):
     zeep_client = Zeep(client.base_url + endpoint)
@@ -18,6 +20,8 @@ def get_job_by_employee_identifier(client, employee_identifier):
         element = zeep_client.get_element('ns6:EmailAddressIdentifier')
         obj = element(**employee_identifier)
 
-    return zeep_client.service.GetJobByEmployeeIdentifier(
+    response = zeep_client.service.GetJobByEmployeeIdentifier(
         _soapheaders=[client.session_header],
         employeeIdentifier=obj)
+
+    return response['Results']['Job'][0]

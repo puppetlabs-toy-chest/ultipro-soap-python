@@ -4,6 +4,32 @@ from zeep import xsd
 from lxml import etree
 from requests import Session
 from zeep.transports import Transport
+import logging.config
+
+logging.config.dictConfig({
+    'version': 1,
+    'formatters': {
+        'verbose': {
+            'format': '%(name)s: %(message)s'
+        }
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'zeep.transports': {
+            'level': 'DEBUG',
+            'propagate': True,
+            'handlers': ['console'],
+        },
+    }
+})
+
+## Below is the code, above is debug
 
 endpoint = 'BiDataService?wsdl'
 
@@ -37,6 +63,5 @@ def execute_report(client, context, report_path, delimiter=','):
     zeep_client = ZeepClient(client.base_url + endpoint, transport=transport)
     element = zeep_client.get_element('ns5:ReportRequest')
     obj = element(**payload)
-    r = zeep_client.service.ExecuteReport(request=obj, context=context)
-    return r['ReportKey']
+    return zeep_client.service.ExecuteReport(request=obj, context=context)
 

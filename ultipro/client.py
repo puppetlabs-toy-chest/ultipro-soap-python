@@ -1,6 +1,8 @@
 #!/usr/bin/env python
+from zeep import Client as Zeep
+from zeep import xsd
 
-class Client:
+class UltiProClient:
 
     def __init__(self, username, password, client_access_key, user_access_key, base_url):
         assert(username is not None)

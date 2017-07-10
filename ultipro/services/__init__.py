@@ -1,5 +1,7 @@
 __all__ = [
     'bi_data',
+    'bi_reports',
+    'bi_stream',
     'employee_address',
     'employee_employment_information',
     'employee_job',
