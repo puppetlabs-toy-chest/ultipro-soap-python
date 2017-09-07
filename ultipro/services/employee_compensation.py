@@ -1,17 +1,17 @@
 from zeep import Client as Zeep
 from zeep import xsd
 
-endpoint = '/EmployeeJob?wsdl'
+endpoint = '/EmployeeCompensation?wsdl'
 
-def find_jobs(client, query):
-    zeep_client = Zeep(client.base_url + endpoint)
-    response = zeep_client.service.FindJobs(
-        _soapheaders=[client.session_header],
-        query=query)
+# def find_jobs(client, query):
+#     zeep_client = Zeep(client.base_url + endpoint)
+#     response = zeep_client.service.FindJobs(
+#         _soapheaders=[client.session_header],
+#         query=query)
 
-    return response['Results']['EmployeeJob']
+#     return response['Results']['EmployeeJob']
 
-def get_job_by_employee_identifier(client, employee_identifier):
+def get_compensation_by_employee_identifier(client, employee_identifier):
     zeep_client = Zeep(client.base_url + endpoint)
     if 'EmployeeNumber' in employee_identifier:
         element = zeep_client.get_element('ns6:EmployeeNumberIdentifier')
@@ -20,7 +20,7 @@ def get_job_by_employee_identifier(client, employee_identifier):
         element = zeep_client.get_element('ns6:EmailAddressIdentifier')
         obj = element(**employee_identifier)
 
-    response = zeep_client.service.GetJobByEmployeeIdentifier(
+    response = zeep_client.service.GetCompensationByEmployeeIdentifier(
         _soapheaders=[client.session_header],
         employeeIdentifier=obj)
 

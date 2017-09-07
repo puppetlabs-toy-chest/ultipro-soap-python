@@ -14,18 +14,18 @@ def log_on_with_token(client):
     }
 
     # Log on to get ns5:DataContext object with auth
-    zeep_client = ZeepClient(client.base_url + endpoint)
+    zeep_client = ZeepClient("{0}{1}".format(client.base_url, endpoint))
     element = zeep_client.get_element('ns5:LogOnWithTokenRequest')
     obj = element(**credentials)
 
     return zeep_client.service.LogOnWithToken(obj)
 
 def get_report_list(client, context):
-    zeep_client = ZeepClient(client.base_url + endpoint)
+    zeep_client = ZeepClient("{0}{1}".format(client.base_url, endpoint))
     return zeep_client.service.GetReportList(context)
 
 def get_report_parameters(client, report_path, context):
-    zeep_client = ZeepClient(client.base_url + endpoint)
+    zeep_client = ZeepClient("{0}{1}".format(client.base_url, endpoint))
     return zeep_client.service.GetReportParameters(report_path, context)
 
 def execute_report(client, context, report_path, delimiter=','):
@@ -34,7 +34,7 @@ def execute_report(client, context, report_path, delimiter=','):
     transport = Transport(session=session)
 
     payload = {'ReportPath': report_path}
-    zeep_client = ZeepClient(client.base_url + endpoint, transport=transport)
+    zeep_client = ZeepClient("{0}{1}".format(client.base_url, endpoint), transport=transport)
     element = zeep_client.get_element('ns5:ReportRequest')
     obj = element(**payload)
     r = zeep_client.service.ExecuteReport(request=obj, context=context)

@@ -1,3 +1,5 @@
 zeep>=1.4.1
 pandas>=0.20.2
+click>=6.7
+configparser>=3.5.0
 

@@ -5,9 +5,10 @@ import datetime
 import decimal
 import json
 import csv
-import ConfigParser
+import configparser
 import ultipro.client
 import ultipro.helpers
+from ultipro.services import *
 
 timestr = time.strftime("%Y%m%d-%H%M%S")
 HOME = os.path.expanduser('~')
@@ -63,13 +64,15 @@ def find(
     employinfo,
     eidcompile):
 
-    c = ultipro.client.Client(
+    client = ultipro.client.UltiProClient(
         ctx.obj['ULTIPRO.username'],
         ctx.obj['ULTIPRO.password'],
         ctx.obj['ULTIPRO.client_access_key'],
         ctx.obj['ULTIPRO.user_access_key'],
         ctx.obj['ULTIPRO.base_url']
     )
+
+    login.authenticate(client)
 
     query = {}
     if firstname:
@@ -81,9 +84,9 @@ def find(
 
     responses = []
     if jobs:
-        responses.append(ultipro.helpers.serialize(c.find_jobs(query)))
+        print(ultipro.helpers.serialize(employee_job.find_jobs(client, query)))
     if people:
-        responses.append(ultipro.helpers.serialize(c.find_people(query)))
+        responses.append(ultipro.helpers.serialize(services.employee_person.find_people(client, query)))
     if addresses:
         responses.append(ultipro.helpers.serialize(c.find_addresses(query)))
     if terms:
@@ -108,7 +111,7 @@ def find(
         click.echo(r)
 
 def read_conf(conf):
-    parser = ConfigParser.RawConfigParser()
+    parser = configparser.ConfigParser()
     parser.read(conf)
     rv = {}
     for section in parser.sections():
