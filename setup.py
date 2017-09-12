@@ -13,10 +13,12 @@ setup(
     packages=['ultipro', 'ultipro.services'],
     license='Apache License 2.0',
     install_requires=[
-        'zeep>=1.4.1',
-        'pandas>=0.20.2',
+        'backoff>=1.4.3',
         'click>=6.7',
-        'configparser>=3.5.0'
+        'configparser>=3.5.0',
+        'pandas>=0.20.3',
+        'pandas_gbq>=0.2.0',
+        'zeep>=2.0.0'
     ],
     keywords=['UltiPro', 'SOAP API', 'Wrapper', 'Client'],
     description='Python Client for the UltiPro SOAP API',

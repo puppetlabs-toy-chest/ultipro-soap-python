@@ -3,23 +3,38 @@ import logging
 import pandas as pd
 from pandas_gbq import gbq
 import io
-# from lxml import etree
-# from zeep import Plugin
+from lxml import etree
+from zeep import Plugin
 
-# class LoggingPlugin(Plugin):
+# Use this plugin as a kwarg for the zeep class to print SOAP messages
+class LoggingPlugin(Plugin):
 
-#     def ingress(self, envelope, http_headers, operation):
-#         print(etree.tostring(envelope, pretty_print=True))
-#         return envelope, http_headers
+    def ingress(self, envelope, http_headers, operation):
+        print(etree.tostring(envelope, pretty_print=True))
+        return envelope, http_headers
 
-#     def egress(self, envelope, http_headers, operation, binding_options):
-#         print(etree.tostring(envelope, pretty_print=True))
-#         return envelope, http_headers
+    def egress(self, envelope, http_headers, operation, binding_options):
+        print(etree.tostring(envelope, pretty_print=True))
+        return envelope, http_headers
+
+def backoff_hdlr(details):
+    """ Prints backoff debug messages"""
+    print("Backing off {wait:0.1f} seconds after {tries} tries "
+          "calling function {target}".format(**details))
+
+def backoff_hdlr_with_args(details):
+    """ USE FOR DEBUGGING ONLY - Prints out all details about backoff events,
+    including ultipro client object with credentials, to STDOUT
+    """
+    print("Backing off {wait:0.1f} seconds after {tries} tries "
+          "calling function {target} with args {args} and kwargs "
+          "{kwargs}".format(**details))
 
 def serialize(response):
     return zeep.helpers.serialize_object(response)
 
 def write_file(report_stream, path):
+    """Writes a stream to a file"""
     f = open(path, "w")
     f.write(report_stream)
     f.close()
@@ -34,8 +49,6 @@ def dataframe_to_bigquery(df):
     """Writes a DataFrame to Big Query. Column names will be downcased and
     all non-alphanumeric characters converted to underscores."""
     df.columns = df.columns.str.strip().str.lower().str.replace(r'[^\w]', '_')
-
-    print(df.info)
 
     # gbq.to_gbq(
     #   dataframe=df,

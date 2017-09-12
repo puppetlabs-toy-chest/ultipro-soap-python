@@ -1,8 +1,12 @@
 from zeep import Client as Zeep
 from zeep import xsd
+import requests
+import backoff
+from ultipro.helpers import backoff_hdlr
 
 endpoint = '/LoginService?wsdl'
 
+@backoff.on_exception(backoff.expo, requests.exceptions.HTTPError, max_tries=8, on_backoff=backoff_hdlr)
 def authenticate(client):
     login_header = {
         'UserName': client.username,
@@ -12,7 +16,7 @@ def authenticate(client):
     }
 
     # Log in and get session token
-    zeep_client = Zeep("{0}{1}".format(client.base_url, endpoint))
+    zeep_client = Zeep(f"{client.base_url}{endpoint}")
     result = zeep_client.service.Authenticate(_soapheaders=login_header)
     client.token = result['Token']
 
@@ -28,3 +32,5 @@ def authenticate(client):
 
     # Add authenticated header to client object
     client.session_header = header(UltiProToken=client.token, ClientAccessKey=client.client_access_key)
+
+
