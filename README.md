@@ -1,8 +1,21 @@
 ## ultipro-soap-python
 
-This library currently supports pulling data from UltiPro.
+A Python 3 library and command line tool for the UltiPro Soap API.
+At present, all functions are read-only against UltiPro.
 
 ### Setup:
+
+This package is not currently hosted in PyPI; please install with pip3 via GitHub.
+
+Ensure you have the latest version of Python 3:
+```
+brew install python3
+pip3 install git+git@github.com:call/ultipro-soap-python.git@master
+```
+
+#### Installation:
+
+This package is not yet hosted on PyPI. You can install in GitHUb
 
 #### Web Service User and Credentials:
 

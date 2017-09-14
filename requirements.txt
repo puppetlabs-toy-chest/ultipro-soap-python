@@ -1,6 +1,6 @@
-backoff>=1.4.3
-click>=6.7
-configparser>=3.5.0
-pandas>=0.20.3
-pandas_gbq>=0.2.0
-zeep>=2.0.0
+backoff==1.4.3
+click==6.7
+configparser==3.5.0
+pandas==0.20.3
+pandas_gbq==0.2.0
+zeep==2.0.0
