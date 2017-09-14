@@ -5,8 +5,7 @@ from zeep.transports import Transport
 from lxml import etree
 from ultipro.helpers import backoff_hdlr
 import requests
-import backoff # Decorators exist to handle intermittent 405 errors from server
-# import inspect
+import backoff # Helps handle intermittent 405 errors from server
 
 endpoint = 'BiDataService?wsdl'
 

@@ -1,3 +1,4 @@
+import configparser
 import zeep
 import logging
 import pandas as pd
@@ -29,6 +30,15 @@ def backoff_hdlr_with_args(details):
     print("Backing off {wait:0.1f} seconds after {tries} tries "
           "calling function {target} with args {args} and kwargs "
           "{kwargs}".format(**details))
+
+def read_conf(conf):
+    parser = configparser.ConfigParser()
+    parser.read(conf)
+    rv = {}
+    for section in parser.sections():
+        for key, value in parser.items(section):
+            rv[f"{section}.{key}"] = value
+    return rv
 
 def serialize(response):
     return zeep.helpers.serialize_object(response)

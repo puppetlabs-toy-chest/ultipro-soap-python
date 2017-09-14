@@ -1,8 +1,8 @@
 from zeep import Client as Zeep
 from zeep import xsd
-import requests
-import backoff
 from ultipro.helpers import backoff_hdlr
+import requests
+import backoff # Helps handle intermittent 405 errors from server
 
 endpoint = '/LoginService?wsdl'
 
