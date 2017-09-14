@@ -6,13 +6,20 @@ UltiPro SOAP Python is a Python client that wraps the UltiPro SOAP API.
 
 setup(
     name='ultipro',
-    version='0.0.1',
+    version='0.0.2',
     url='https://github.com/call/ultipro-soap-python',
     author='Brian Call',
     author_email='callbrian@gmail.com',
-    packages=['ultipro'],
+    packages=['ultipro', 'ultipro.services'],
     license='Apache License 2.0',
-    install_requires=['zeep>=1.4.1'],
+    install_requires=[
+        'backoff>=1.4.3',
+        'click>=6.7',
+        'configparser>=3.5.0',
+        'pandas>=0.20.3',
+        'pandas_gbq>=0.2.0',
+        'zeep>=2.0.0'
+    ],
     keywords=['UltiPro', 'SOAP API', 'Wrapper', 'Client'],
     description='Python Client for the UltiPro SOAP API',
     long_description=long_description,

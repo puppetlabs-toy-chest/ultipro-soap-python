@@ -5,15 +5,16 @@ import datetime
 import decimal
 import json
 import csv
-import ConfigParser
-import ultipro.client
-import ultipro.helpers
+import configparser
+from ultipro.client import UltiProClient
+import ultipro.helpers as helpers
+from ultipro.services import *
 
 timestr = time.strftime("%Y%m%d-%H%M%S")
 HOME = os.path.expanduser('~')
-DEFAULT_BASENAME = "/UltiPro_Report-{0}".format(timestr)
-DEFAULT_CONFFILE = os.path.join(click.get_app_dir('ultipro-soap-python'), 'config.ini')
-DEFAULT_OUTFILE = "{0}/Desktop{1}".format(HOME, DEFAULT_BASENAME)
+DEFAULT_BASENAME = f"UltiPro-Report-{timestr}.csv"
+DEFAULT_CONFIG = os.path.join(click.get_app_dir('ultipro-soap-python'), 'config.ini')
+DEFAULT_OUTFILE = f"{HOME}/Desktop/{DEFAULT_BASENAME}"
 
 class UltiProEncoder(json.JSONEncoder):
 
@@ -26,100 +27,153 @@ class UltiProEncoder(json.JSONEncoder):
         return json.UltiProEncoder.default(self, obj)
 
 @click.group()
-@click.option('--conffile', '-f', default=DEFAULT_CONFFILE, help='UltiPro API config.ini file path.', type=click.Path(exists=True))
-@click.option('--outfile', '-o', default=DEFAULT_OUTFILE, help='File to write to, without file extension.', type=click.Path())
-@click.option('--format', type=click.Choice(['json', 'concur_csv']))
-@click.option('--printout/--no-printout', default=False, help='Whether to print results to the console.')
+@click.option('--config',
+              '-f',
+              default=DEFAULT_CONFIG,
+              help='UltiPro API config.ini file path.',
+              type=click.Path(exists=True))
+@click.option('--outfile',
+              '-o',
+              default=DEFAULT_OUTFILE,
+              help='File to write to, with extension. (default = .csv).',
+              type=click.Path())
+@click.option('--print/--no-print',
+              default=False,
+              help='Whether to print results to the console.')
 @click.pass_context
-def cli(ctx, conffile, outfile, format, printout):
-    click.echo('Using config file: %s' % conffile)
-    ctx.obj = read_conf(conffile)
+def cli(ctx, config, outfile, print):
+    click.echo(f"Using config file: {config}")
+    ctx.obj = helpers.read_conf(config)
     ctx.obj['outfile'] = outfile
-    ctx.obj['format'] = format
-    ctx.obj['printout'] = printout
+    ctx.obj['print'] = print
+
+## This find command needs to be reimplemented to accept either an
+## employee identifier or search string(s), then do find or
+## get by ID accordingly
+
+# @cli.command()
+# @click.option('--search-type', type=click.Choice['find', 'eid'],
+#                help='Whether to use search strings in the find operation or '
+#                'search by employee identifier')
+# @click.option('--firstname',
+#               '-f',
+#               help='Employee Property: FirstName')
+# @click.option('--lastname',
+#               '-l',
+#               help='Employee Property: LastName')
+# @click.option('--employee_number',
+#               '-n',
+#               help='Employee Property: EmployeeNumber')
+# @click.option('--email',
+#               '-e',
+#               help='Employee Property: EmployeeNumber')
+# @click.option('--jobs',
+#               default=False,
+#               help='API Operation: FindJobs',
+#               type=click.BOOL)
+# @click.option('--people',
+#               default=False,
+#               help='API Operation: FindPeople',
+#               type=click.BOOL)
+# @click.option('--addresses',
+#               default=False,
+#               help='API Operation: FindAddresses',
+#               type=click.BOOL)
+# @click.option('--terms',
+#               default=False,
+#               help='API Operation: FindTerminations',
+#               type=click.BOOL)
+# @click.option('--phones',
+#               default=False,
+#               help='API Operation: FindPhoneInformations',
+#               type=click.BOOL)
+# @click.option('--employees',
+#               default=False,
+#               help='API Operation: FindEmploymentInformations',
+#               type=click.BOOL)
+# @click.option('--comps',
+#               default=False,
+#               help='API Operation: Find Compensation',
+#               type=click.BOOL)
+# @click.pass_context
+# def get(ctx, by_id, firstname, lastname, employee_number, email, jobs, people,
+#          addresses, terms, phones, employees, comps):
+
+#     client = create_client(ctx)
+#     login.authenticate(client)
+
+#     query = {}
+#     if first:
+#         query['FirstName'] = first
+#     if last:
+#         query['LastName'] = last
+#     if eid:
+#         query['EmployeeNumber'] = eid
+#     if email:
+#         query['Email'] = email
+
+#     if by_id = False
+
+#     responses = []
+#     if jobs:
+#         print(ultipro.helpers.serialize(employee_job.find_jobs(client, query)))
+#     if people:
+#         responses.append(ultipro.helpers.serialize(services.employee_person.find_people(client, query)))
+#     if addresses:
+#         responses.append(ultipro.helpers.serialize(c.find_addresses(query)))
+#     if terms:
+#         responses.append(ultipro.helpers.serialize(c.find_terminations(query)))
+#     if phoneinfo:
+#         responses.append(ultipro.helpers.serialize(c.find_phone_informations(query)))
+#     if employinfo:
+#         responses.append(ultipro.helpers.serialize(c.find_employment_informations(query)))
+
+#     if eidcompile:
+#         r = ultipro.helpers.compile_on_eid(responses)
+#     else:
+#         r = responses
+
+#     if ctx.obj['format'] == 'concur_csv':
+#         pass
+
+#     if ctx.obj['format'] == 'json':
+#         r = write_json(ctx, r)
+
+#     if ctx.obj['printout']:
+#         click.echo(r)
+
+# @click.pass_context
+# def get_by_id(ctx, firstname, lastname, employeenumber, job_info, person_info,
+#               address_info, term_info, phone_info, employee_info, comp_info):
 
 @cli.command()
-@click.option('--firstname', '-fname', help='Employee Property: FirstName')
-@click.option('--lastname', '-lname', help='Employee Property: LastName')
-@click.option('--employeenumber', '-eid', help='Employee Property: EmployeeNumber')
-@click.option('--jobs/--no-jobs', default=False, help='API Operation: FindJobs')
-@click.option('--people/--no-people', default=False, help='API Operation: FindPeople')
-@click.option('--addresses/--no-addresses', default=False, help='API Operation: FindAddresses')
-@click.option('--terms/--no-terms', default=False, help='API Operation: FindTerminations')
-@click.option('--phoneinfo/--no-phoneinfo', default=False, help='API Operation: FindPhoneInformations')
-@click.option('--employinfo/--no-employinfo', default=False, help='API Operation: FindEmploymentInformations')
-@click.option('--eidcompile/--no-eidcompile', default=False, help='Whether to compile results based on eid')
+@click.argument('report_path')
 @click.pass_context
-def find(
-    ctx,
-    firstname,
-    lastname,
-    employeenumber,
-    jobs,
-    people,
-    addresses,
-    terms,
-    phoneinfo,
-    employinfo,
-    eidcompile):
+def report(ctx, report_path):
+    client = create_client(ctx)
+    login.authenticate(client)
+    data = bi_reports.execute_and_fetch(client, report_path)
+    if ctx.obj['print']:
+        print(data)
+    if ctx.obj['outfile']:
+        helpers.write_file(data, ctx.obj['outfile'])
+        click.echo(f"Saved output file as: {ctx.obj['outfile']}")
+    return data
 
-    c = ultipro.client.Client(
+def write_json(ctx, r):
+    outfile = ctx.obj['outfile'] + '.json'
+    click.echo(f"JSON saved to: {outfile}")
+    json_str = json.dumps(r, cls=UltiProEncoder, ensure_ascii=False, indent=4, sort_keys=True)
+    with open(outfile, 'w') as f:
+        f.write(json_str)
+    return json_str
+
+def create_client(ctx):
+    client = UltiProClient(
         ctx.obj['ULTIPRO.username'],
         ctx.obj['ULTIPRO.password'],
         ctx.obj['ULTIPRO.client_access_key'],
         ctx.obj['ULTIPRO.user_access_key'],
         ctx.obj['ULTIPRO.base_url']
     )
-
-    query = {}
-    if firstname:
-        query['FirstName'] = firstname
-    if lastname:
-        query['LastName'] = lastname
-    if employeenumber:
-        query['EmployeeNumber'] = employeenumber
-
-    responses = []
-    if jobs:
-        responses.append(ultipro.helpers.serialize(c.find_jobs(query)))
-    if people:
-        responses.append(ultipro.helpers.serialize(c.find_people(query)))
-    if addresses:
-        responses.append(ultipro.helpers.serialize(c.find_addresses(query)))
-    if terms:
-        responses.append(ultipro.helpers.serialize(c.find_terminations(query)))
-    if phoneinfo:
-        responses.append(ultipro.helpers.serialize(c.find_phone_informations(query)))
-    if employinfo:
-        responses.append(ultipro.helpers.serialize(c.find_employment_informations(query)))
-
-    if eidcompile:
-        r = ultipro.helpers.compile_on_eid(responses)
-    else:
-        r = responses
-
-    if ctx.obj['format'] == 'concur_csv':
-        pass
-
-    if ctx.obj['format'] == 'json':
-        r = write_json(ctx, r)
-
-    if ctx.obj['printout']:
-        click.echo(r)
-
-def read_conf(conf):
-    parser = ConfigParser.RawConfigParser()
-    parser.read(conf)
-    rv = {}
-    for section in parser.sections():
-        for key, value in parser.items(section):
-            rv['%s.%s' % (section, key)] = value
-    return rv
-
-def write_json(ctx, r):
-    outfile = ctx.obj['outfile'] + '.json'
-    click.echo("JSON saved to: %s" % outfile)
-    json_str = json.dumps(r, cls=UltiProEncoder, ensure_ascii=False, indent=4, sort_keys=True)
-    with open(outfile, 'w') as f:
-        f.write(json_str)
-    return json_str
+    return client

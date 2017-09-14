@@ -1,0 +1,7 @@
+[ULTIPRO]
+username = foo_user
+password = s0m3l0ngp4ssw0rd
+client_access_key = FIZZBUZZ
+user_access_key = FOOBARBAZ
+base_url = https://service4.ultipro.com/services/
+
