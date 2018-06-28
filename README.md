@@ -10,12 +10,12 @@ This package is not currently hosted in PyPI; please install with pip3 via GitHu
 Ensure you have the latest version of Python 3:
 ```
 brew install python3
-pip3 install git+git@github.com:call/ultipro-soap-python.git@master
+pip3 install git+git://github.com/puppetlabs/ultipro-soap-python.git@master
 ```
 
 #### Installation:
 
-This package is not yet hosted on PyPI. You can install in GitHUb
+This package is not yet hosted on PyPI. You can install from GitHub using pip.
 
 #### Web Service User and Credentials:
 
