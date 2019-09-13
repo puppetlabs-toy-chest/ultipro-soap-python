@@ -7,7 +7,7 @@ At present, all functions are read-only against UltiPro.
 
 This package is not currently hosted in PyPI; please install with pip3 via GitHub.
 
-Ensure you have the latest version of Python 3:
+Ensure you have the latest version of Python 3.6 or higher:
 ```
 brew install python3
 pip3 install git+git://github.com/puppetlabs/ultipro-soap-python.git@master
