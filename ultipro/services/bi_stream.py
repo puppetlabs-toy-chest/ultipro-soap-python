@@ -15,4 +15,5 @@ def retrieve_report(client, report_key):
     while report_status.lower() != 'completed':
         print(f'Report Status: {report_status}')
         report = zeep_client.service.RetrieveReport(_soapheaders={'ReportKey': report_key})
+        report_status = report['headers']['Status']
     return report
