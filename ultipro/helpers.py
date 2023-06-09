@@ -45,7 +45,7 @@ def serialize(response):
 
 def write_file(report_stream, path):
     """Writes a stream to a file"""
-    f = open(path, "w")
+    f = open(path, "w", encoding='utf-8')
     f.write(report_stream)
     f.close()
 
